@@ -1,0 +1,166 @@
+﻿@page "/"
+@using MovieRental.Shared
+@using MovieRental.Client.Services
+@inject MovieService MovieService
+@inject IndexedDbService IndexedDbService
+@inject IJSRuntime JSRuntime
+
+<div class="page-header">
+    <h1 class="page-title">Movie Rental</h1>
+    <p class="page-subtitle">Discover and watch your favorite movies for 24 hours</p>
+</div>
+
+<div class="container">
+    @if (isLoading)
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">🎬</div>
+            <h2 class="empty-state-title">Loading Movies...</h2>
+        </div>
+    }
+    else if (movies == null || !movies.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">🎭</div>
+            <h2 class="empty-state-title">No Movies Available</h2>
+            <p class="empty-state-text">Check back later for new releases!</p>
+        </div>
+    }
+    else
+    {
+        <div class="movie-grid fade-in">
+            @foreach (var movie in movies)
+            {
+                <div class="card">
+                    <img src="@movie.ImageUrl" 
+                         alt="@movie.Title" 
+                         class="card-img" 
+                         loading="lazy"
+                         decoding="async" />
+                    <div class="card-body">
+                        <h3 class="card-title">@movie.Title</h3>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span class="rating">@movie.Rating.ToString("F1")</span>
+                            <span class="badge badge-primary">@movie.Genre</span>
+                        </div>
+                        
+                        <p class="card-text">@movie.Description</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span class="price">$@movie.Price.ToString("F2")</span>
+                            
+                            @if (rentedMovieIds.Contains(movie.Id ?? ""))
+                            {
+                                <button class="btn btn-success" disabled>
+                                    ✓ Rented
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" @onclick="() => WatchNow(movie)">
+                                    ▶ Watch Now
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert @(isSuccess ? "alert-success" : "alert-warning")">
+            @message
+        </div>
+    }
+</div>
+
+@code {
+    private List<Movie> movies = new();
+    private HashSet<string> rentedMovieIds = new();
+    private bool isLoading = true;
+    private string message = "";
+    private bool isSuccess = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load data in parallel for faster performance
+        var moviesTask = LoadMovies();
+        var rentalsTask = LoadRentedMovies();
+        
+        await Task.WhenAll(moviesTask, rentalsTask);
+    }
+
+    private async Task LoadMovies()
+    {
+        try
+        {
+            movies = await MovieService.GetMoviesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading movies: {ex.Message}");
+            movies = new List<Movie>();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadRentedMovies()
+    {
+        try
+        {
+            await IndexedDbService.InitializeAsync();
+            var rentals = await IndexedDbService.GetAllRentalsAsync();
+            rentedMovieIds = rentals
+                .Where(r => !r.IsExpired)
+                .Select(r => r.MovieId)
+                .ToHashSet();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading rentals: {ex.Message}");
+            // IndexedDB might not be available, continue without it
+            rentedMovieIds = new HashSet<string>();
+        }
+    }
+
+    private async Task WatchNow(Movie movie)
+    {
+        if (string.IsNullOrWhiteSpace(movie.Id))
+        {
+            message = "❌ Cannot rent this item: missing movie Id.";
+            isSuccess = false;
+            StateHasChanged();
+            return;
+        }
+
+        var success = await IndexedDbService.AddRentalAsync(movie);
+        
+        if (success)
+        {
+            rentedMovieIds.Add(movie.Id);
+            message = $"🎉 Success! '{movie.Title}' has been added to your watch list for 24 hours!";
+            isSuccess = true;
+            
+            // Clear message after 5 seconds
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                message = "";
+                await InvokeAsync(StateHasChanged);
+            });
+        }
+        else
+        {
+            message = "❌ Failed to rent the movie. Please try again.";
+            isSuccess = false;
+        }
+        
+        StateHasChanged();
+    }
+}

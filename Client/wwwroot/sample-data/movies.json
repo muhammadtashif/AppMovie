@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1",
+    "title": "The Matrix",
+    "rating": 8.7,
+    "price": 4.99,
+    "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400",
+    "description": "A computer hacker learns about the true nature of reality and his role in the war against its controllers.",
+    "genre": "Sci-Fi",
+    "releaseYear": 1999
+  },
+  {
+    "id": "2",
+    "title": "Inception",
+    "rating": 8.8,
+    "price": 5.99,
+    "imageUrl": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=400",
+    "description": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.",
+    "genre": "Sci-Fi",
+    "releaseYear": 2010
+  },
+  {
+    "id": "3",
+    "title": "The Dark Knight",
+    "rating": 9.0,
+    "price": 5.99,
+    "imageUrl": "https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400",
+    "description": "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest tests.",
+    "genre": "Action",
+    "releaseYear": 2008
+  },
+  {
+    "id": "4",
+    "title": "Interstellar",
+    "rating": 8.6,
+    "price": 4.99,
+    "imageUrl": "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400",
+    "description": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    "genre": "Sci-Fi",
+    "releaseYear": 2014
+  },
+  {
+    "id": "5",
+    "title": "Pulp Fiction",
+    "rating": 8.9,
+    "price": 3.99,
+    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400",
+    "description": "The lives of two mob hitmen, a boxer, and a pair of diner bandits intertwine in four tales of violence.",
+    "genre": "Crime",
+    "releaseYear": 1994
+  }
+]

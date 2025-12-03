@@ -1,0 +1,12 @@
+C:\Users\Administrator\Movie App\MovieRental\Shared\bin\Debug\net9.0\MovieRental.Shared.deps.json
+C:\Users\Administrator\Movie App\MovieRental\Shared\bin\Debug\net9.0\MovieRental.Shared.dll
+C:\Users\Administrator\Movie App\MovieRental\Shared\bin\Debug\net9.0\MovieRental.Shared.pdb
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.csproj.AssemblyReference.cache
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.AssemblyInfoInputs.cache
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.AssemblyInfo.cs
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.dll
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\refint\MovieRental.Shared.dll
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\MovieRental.Shared.pdb
+C:\Users\Administrator\Movie App\MovieRental\Shared\obj\Debug\net9.0\ref\MovieRental.Shared.dll
