@@ -1,42 +1,23 @@
-window.indexedDbHelper = {
-    // Cache DB instances in JS so we don't return non-serializable objects to .NET
-    _dbCache: {},
-
+﻿window.indexedDbHelper = {
     initDB: function (dbName, storeName) {
         return new Promise((resolve, reject) => {
-            // If DB is already cached and open, resolve immediately
-            if (this._dbCache[dbName]) {
-                resolve(true);
-                return;
-            }
-
             const request = indexedDB.open(dbName, 1);
 
             request.onerror = () => reject(request.error);
-            request.onsuccess = () => {
-                // Cache the DB instance for later use from other functions
-                this._dbCache[dbName] = request.result;
-                resolve(true); // Resolve with a simple serializable value
-            };
+            request.onsuccess = () => resolve(request.result);
 
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
                 if (!db.objectStoreNames.contains(storeName)) {
-                    // Use PascalCase key to match C# serialized property names (MovieId)
-                    db.createObjectStore(storeName, { keyPath: 'MovieId' });
-                }
+                        // Use PascalCase key to match C# serialized property names (MovieId)
+                        db.createObjectStore(storeName, { keyPath: 'MovieId' });
+                    }
             };
         });
     },
 
-    // Internal helper to get a DB instance (ensures init was called)
-    _getDB: async function (dbName, storeName) {
-        await this.initDB(dbName, storeName);
-        return this._dbCache[dbName];
-    },
-
     addRental: async function (dbName, storeName, movieId, rentalJson) {
-        const db = await this._getDB(dbName, storeName);
+        const db = await this.initDB(dbName, storeName);
         const rental = JSON.parse(rentalJson);
 
         return new Promise((resolve, reject) => {
@@ -50,7 +31,7 @@ window.indexedDbHelper = {
     },
 
     getRental: async function (dbName, storeName, movieId) {
-        const db = await this._getDB(dbName, storeName);
+        const db = await this.initDB(dbName, storeName);
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([storeName], 'readonly');
@@ -69,7 +50,7 @@ window.indexedDbHelper = {
     },
 
     getAllRentals: async function (dbName, storeName) {
-        const db = await this._getDB(dbName, storeName);
+        const db = await this.initDB(dbName, storeName);
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([storeName], 'readonly');
@@ -85,7 +66,7 @@ window.indexedDbHelper = {
     },
 
     removeRental: async function (dbName, storeName, movieId) {
-        const db = await this._getDB(dbName, storeName);
+        const db = await this.initDB(dbName, storeName);
 
         return new Promise((resolve, reject) => {
             const transaction = db.transaction([storeName], 'readwrite');
@@ -103,7 +84,7 @@ window.addEventListener('load', async () => {
     try {
         const dbName = 'MovieRentalDB';
         const storeName = 'rentals';
-        const db = await window.indexedDbHelper._getDB(dbName, storeName);
+        const db = await window.indexedDbHelper.initDB(dbName, storeName);
 
         const transaction = db.transaction([storeName], 'readwrite');
         const store = transaction.objectStore(storeName);

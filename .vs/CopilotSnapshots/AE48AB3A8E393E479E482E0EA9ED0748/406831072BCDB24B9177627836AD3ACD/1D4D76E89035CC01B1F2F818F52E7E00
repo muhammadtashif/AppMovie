@@ -1,4 +1,4 @@
-window.indexedDbHelper = {
+﻿window.indexedDbHelper = {
     // Cache DB instances in JS so we don't return non-serializable objects to .NET
     _dbCache: {},
 
